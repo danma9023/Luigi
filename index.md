@@ -27,6 +27,20 @@ Let’s image to run our pipeline a first time, and in this first run Node B fai
 
 After we have manually fixed the error in Node B the pipeline can run again but, in this occasion, it will not consider Node A.
 
+## 2. Basic Components
+As mentioned, the Luigi package works like a graph. The nodes in Luigi are called Tasks and the edges are called Targets.
+
+- **Target**:- In simple words, a target holds the output of a task. A target could be a local(e.g: a file), HDFS or RDBMS(MySQL etc). Target is the edge connecting a Tasks to the next. These are usually represented as a file. The file ‘helloworld.txt’ was a Target in our following example. A Task can be considered complete if and only if each of its output Targets exist. They can be as simple as empty files, an S3 or whatever.
+- **Task**:- Task is the basic building blocks of Luigi and something where the actual work takes place. 
+    
+    A task could be independent or dependent. The example of a dependant task is dumping the data into a file or database. Before loading the data the data must be there by any mean(scraping, API, etc). Each task is represented as a Python Class which contains certain mandatory member functions. To create a task you have to create a class and inherit the class luigi.Task. A task function contains the following methods:
+    - **requires()**:- This member function of the task class contains all the task instances that must be executed before the current task. In the example I shared below, a task, named `HelloWorld`, will be included in the `requires()` method of task `Substituter`, hence make a task a dependant task.
+
+        Most commonly this method makes a call to another Luigi Task above the workflow, allowing the code to move backward to the beginning of the pipeline. Only when a method requires is satisfied that Task can execute. 
+    - **output()**:- This method contains the target where the task output will be stored. This could contain one or more target objects. Although, it is recommended that any Task only return one single Target in output.
+
+    - **run()**: In this method is contained the action that the task has to execute. It can be anything, a call to another method, the running of a script, etc.
+
 The following is an example of naive ETL. It is is desigend to put 'Hello World' in a text file and then replace 'World' with your input name.
 
 import time
@@ -101,7 +115,7 @@ If the task runs sucessfully, we will have the following results:
 
 ![](luigi_3.png)
 
-## 3. External Task and External Parameter
+## 2. External Task and External Parameter
 
 The Luigi pipeline can also takes external tasks or external parameters. For example:
 
