@@ -115,7 +115,7 @@ If the task runs sucessfully, we will have the following results:
 
 ![](luigi_3.png)
 
-## 2. External Task and External Parameter
+## 3. External Task and External Parameter
 
 The Luigi pipeline can also takes external tasks or external parameters. For example:
 
